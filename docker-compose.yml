@@ -1,0 +1,41 @@
+services:
+  teste:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: teste-descartavel
+    container_name: ubuntu
+    
+    # Configurações para tornar o contêiner completamente descartável
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    
+    # Modo privilegiado para Docker in Docker
+    privileged: true
+    
+    # Sem volumes persistentes
+    volumes:
+      - /var/lib/docker  # Permite que o Docker interno tenha seu próprio estado
+    
+    # Manter o contêiner rodando indefinidamente para testes
+    stdin_open: true
+    tty: true
+    
+    # Configurações para descarte
+    restart: 'no'  # Não reiniciar automaticamente
+    
+    # Recursos limitados para testes
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+    # Ambiente de teste
+    environment:
+      - AMBIENTE=teste
